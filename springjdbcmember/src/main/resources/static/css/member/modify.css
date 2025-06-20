@@ -1,0 +1,96 @@
+@charset "UTF-8";
+
+/* 헤더 화면 */
+body {
+	background-color: #f4f4f4;
+	margin: 0;
+	padding: 0;
+}
+
+header {
+	background-color: #4CAF50;
+	color: white;
+	padding: 20px;
+	text-align: center;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+	margin: 0;
+	font-size: 2em;
+}
+
+footer {
+	background-color: #333;
+	color: #fff;
+	text-align: center;
+	padding: 15px 0;
+	margin-top: auto;
+	font-size: 0.9em;
+}
+
+/* 수정 화면 */
+main {
+	max-width: 600px;
+	margin: 40px auto;
+	background-color: #fff;
+	padding: 30px;
+	border-radius: 12px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+	text-align: center;
+	color: #333;
+	margin-bottom: 25px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+td {
+	padding: 10px;
+	vertical-align: top;
+}
+
+form\:input, form\:textarea {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	box-sizing: border-box;
+	font-size: 1em;
+}
+
+form\:textarea {
+	resize: vertical;
+	min-height: 60px;
+}
+
+font[color="red"] {
+	font-size: 0.85em;
+	display: block;
+	margin-top: 4px;
+}
+
+#btnRegister, #btnList, #btnModify  {
+	background-color: #4CAF50;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	margin: 15px 10px 0 0;
+	border-radius: 6px;
+	font-size: 1em;
+	cursor: pointer;
+}
+
+#btnRegister:hover, #btnList:hover {
+	background-color: #45a049;
+}
+
+/* 버튼 영역 가운데 정렬 */
+main>div {
+	text-align: center;
+}
