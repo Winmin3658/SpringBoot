@@ -1,14 +1,18 @@
 package com.kh.springbootfileupload.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,7 +67,7 @@ public class ItemController {
         // 업로드된 파일을 외부 저장소에 저장하고, 그 저장된 파일명이 리턴함수다.
 		String createdFileName = uploadFile(file.getOriginalFilename(), file.getBytes());
 		item.setPictureUrl(createdFileName);
-		this.itemService.create(item);
+		itemService.create(item);
 		model.addAttribute("msg", "등록이 완료되었습니다.");
 
 		return "item/success";
@@ -77,40 +81,6 @@ public class ItemController {
 		return "item/modify";
 	}
 
-	@PostMapping(value = "/modify")
-	public String modify(Item item, Model model) throws Exception {
-		MultipartFile file = item.getPicture();
-
-		if (file != null && file.getSize() > 0) {
-			log.info("originalName: " + file.getOriginalFilename());
-			log.info("size: " + file.getSize());
-			log.info("contentType: " + file.getContentType());
-
-			String createdFileName = uploadFile(file.getOriginalFilename(), file.getBytes());
-
-			item.setPictureUrl(createdFileName);
-		}
-		this.itemService.modify(item);
-		model.addAttribute("msg", "수정이 완료되었습니다.");
-		return "item/success";
-	}
-
-	@GetMapping(value = "/remove")
-	public String removeForm(Integer itemId, Model model) throws Exception {
-		Item item = this.itemService.read(itemId);
-		model.addAttribute(item);
-		return "item/remove";
-	}
-
-	@PostMapping(value = "/remove")
-	public String remove(Item item, Model model) throws Exception {
-		this.itemService.remove(item.getItemId());
-
-		model.addAttribute("msg", "삭제가 완료되었습니다.");
-
-		return "item/success";
-	}
-
     // 외부 저장소 자료 업로드 파일명 생성 후 저장
 	private String uploadFile(String originalName, byte[] fileData) throws Exception {
 		UUID uid = UUID.randomUUID();
@@ -122,17 +92,82 @@ public class ItemController {
 		return createdFileName;
 	}
 
+    // 수정 내용 저장 요청
+	@PostMapping(value = "/modify")
+	public String modify(Item item, Model model) throws Exception {
+		MultipartFile file = item.getPicture();
+
+		if (file != null && file.getSize() > 0) {
+            Item oldItem = itemService.read(item);
+            // 외부 저장소에 있는 기존 파일 삭제
+            String oldPictureUrl = oldItem.getPictureUrl();
+            deleteFile(oldPictureUrl);
+
+			log.info("originalName: " + file.getOriginalFilename());
+			log.info("size: " + file.getSize());
+			log.info("contentType: " + file.getContentType());
+
+			String createdFileName = uploadFile(file.getOriginalFilename(), file.getBytes());
+			item.setPictureUrl(createdFileName);
+		}
+        // 수정을 했다. kkk.jpg 디비에도 저장되어 있고 외부 저장소 kkk.jpg에도 저장되어 있음
+		itemService.update(item);
+		model.addAttribute("msg", "수정이 완료되었습니다.");
+		return "item/success";
+	}
+
+    // 삭제 화면 요청
+	@GetMapping(value = "/remove")
+	public String removeForm(Item item, Model model) throws Exception {
+		Item _item = itemService.read(item);
+		model.addAttribute("item",_item);
+		return "item/remove";
+	}
+
+    // 삭제 내용 처리
+	@PostMapping(value = "/remove")
+	public String remove(Item item, Model model) throws Exception {
+        // 외부 저장소에 있는 기존 파일 삭제
+        Item oldItem = itemService.read(item);
+        String oldPictureUrl = oldItem.getPictureUrl();
+        boolean flag = deleteFile(oldPictureUrl);
+        
+        if(flag == true) {
+            itemService.delete(item);
+            model.addAttribute("msg", "삭제가 완료되었습니다.");
+        } else {
+            model.addAttribute("msg", "외부 저장소 삭제 문제가 발생했습니다.");
+        }
+		return "item/success";
+	}
+
+    // 외부 저장소 자료 업로드 파일명 생성 후 저장
+	private boolean deleteFile(String fileName) throws Exception {
+        // /upload/""../window/system.ini" 디렉토리 탈출 공격(path tarversal) 방어
+        if(fileName.contains("..")) {
+            throw new IllegalArgumentException("잘못된 경로를 입력하였습니다.");
+        }
+        // upload/(UUID)_kkk.jpg => 파일로 인식되는 부분
+        File file = new File(uploadPath, fileName);
+        return (file.exists() == true)?(file.delete()):(false);
+	}
+
 	@ResponseBody
-	@RequestMapping("/display")
-	public ResponseEntity<byte[]> displayFile(Integer itemId) throws Exception {
+	@GetMapping("/display")
+	public ResponseEntity<byte[]> displayFile(Item item) throws Exception {
 		InputStream in = null;
 		ResponseEntity<byte[]> entity = null;
-		String fileName = itemService.getPicture(itemId);
+
+		Item _item = itemService.getPicture(item);
+        String fileName = _item.getPictureUrl();
 		log.info("FILE NAME: " + fileName);
 		try {
+            // (uuid)_kkk.jpg => "jpg"
 			String formatName = fileName.substring(fileName.lastIndexOf(".") + 1);
 			MediaType mType = getMediaType(formatName);
+            // httpHeader 미디어 타입을 설정
 			HttpHeaders headers = new HttpHeaders();
+            // upload/(uuid)_kkk.jpg
 			in = new FileInputStream(uploadPath + File.separator + fileName);
 
 			if (mType != null) {
@@ -149,21 +184,19 @@ public class ItemController {
 		return entity;
 	}
 
+    // 멀티 미디어 타입 리턴 "jpg" => MediaType.IMAGE_JPEG
 	private MediaType getMediaType(String formatName) {
 		if (formatName != null) {
 			if (formatName.equals("JPG")) {
 				return MediaType.IMAGE_JPEG;
 			}
-
 			if (formatName.equals("GIF")) {
 				return MediaType.IMAGE_GIF;
 			}
-
 			if (formatName.equals("PNG")) {
 				return MediaType.IMAGE_PNG;
 			}
 		}
-
 		return null;
 	}
 }
