@@ -21,12 +21,14 @@ public class LoginController {
         return "login/loginForm";
     }
     @PostMapping("/login")
-    public String login(Member member, Model model) {
+    public void login(Member member, Model model) {
         log.info("2번 LoginController login start");
         log.info("login userId = " + member.getUserId());
         log.info("login userPw = " + member.getUserPw());
-        model.addAttribute("result",
-        "로그인 되었습니다.");
-        return "login/success";
+
+        member.setUserName("제우스");
+        member.setEmail("zeus@zeus.com");
+        model.addAttribute("user", member);
+
     }
 }
