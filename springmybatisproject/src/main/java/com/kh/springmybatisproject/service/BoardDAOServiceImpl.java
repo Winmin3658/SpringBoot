@@ -16,7 +16,6 @@ public class BoardDAOServiceImpl implements BoardDAOService {
 
     @Override
     public void insert(MybatisBoard board) throws Exception {
-        int value = 5 / 0;
         bd.insert(board);
     }
 
