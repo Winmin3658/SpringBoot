@@ -5,8 +5,8 @@
 <!-- 화면영역 -->
 <main>
   <div>
-    <h2>${msg}</h2>
-    <a href="/member/list">List</a>
+    <h2>고객님 잘못된 경로로 페이지를 요청하셨습니다.</h2>
+    <a href="/board/list">List</a>
   </div>
 </main>
 
