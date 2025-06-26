@@ -29,6 +29,5 @@ public class LoginController {
         member.setUserName("제우스");
         member.setEmail("zeus@zeus.com");
         model.addAttribute("user", member);
-
     }
 }
