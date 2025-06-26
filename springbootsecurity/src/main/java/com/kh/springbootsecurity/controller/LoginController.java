@@ -1,5 +1,6 @@
 package com.kh.springbootsecurity.controller;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Log
+@MapperScan("com.kh.springframework.mapper")
 @Controller
 public class LoginController {
     // 에러 메시지와 로그아웃 메시지를 파라미터로 사용한다.

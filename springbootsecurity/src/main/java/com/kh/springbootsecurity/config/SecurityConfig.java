@@ -1,17 +1,23 @@
 package com.kh.springbootsecurity.config;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import com.kh.springbootsecurity.common.security.CustomAccessDeniedHandler;
 import com.kh.springbootsecurity.common.security.CustomLoginSuccessHandler;
+import com.kh.springbootsecurity.common.security.CustomNoOpPasswordEncoder;
+import com.kh.springbootsecurity.common.security.CustomUserDetailsService;
 
 import jakarta.servlet.FilterChain;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 @EnableWebSecurity
 //SpringBootwebSecurityConfiguration.WebSecurityEnablerConfiguration 자동 설정 X
 public class SecurityConfig {
+    @Autowired
+    private DataSource dataSource;
+    
     @Bean
     //SpringBootwebSecurityConfiguration.SecurityFilterChainConfiguration: 자동 설정 X
     SecurityFilterChain FilterChain(HttpSecurity http) throws Exception {
@@ -56,14 +65,30 @@ public class SecurityConfig {
 
         return http.build();
     }
-    @Autowired
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+    /* @Autowired
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
         // 지정된 아이디와 패스워드로 로그인이 가능하도록 설정한다.
         auth.inMemoryAuthentication().withUser("member").
                           password("{noop}123456").roles("MEMBER");
 
                auth.inMemoryAuthentication().withUser("admin").
                           password("{noop}123456").roles("ADMIN", "MEMBER");
+    } */
+
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(createUserDetailsService()).passwordEncoder(createPasswordEncoder());
+    }
+
+    // 스프링 시큐리티의 UserDetailsService를 구현한 클래스를 빈으로 등록한다.
+    @Bean
+    public UserDetailsService createUserDetailsService() {
+        return new CustomUserDetailsService();
+    }
+    // 사용자가 정의한 비번 암호화 처리기를 빈으로 등록한다.
+    @Bean
+    public PasswordEncoder createPasswordEncoder() {
+        return new CustomNoOpPasswordEncoder();
     }
 
     // CustomAccessDeniedHandler를 빈으로 등록한다.
