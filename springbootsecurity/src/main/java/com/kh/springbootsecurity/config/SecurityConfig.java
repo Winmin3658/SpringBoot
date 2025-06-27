@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import com.kh.springbootsecurity.common.security.CustomAccessDeniedHandler;
 import com.kh.springbootsecurity.common.security.CustomLoginSuccessHandler;
@@ -26,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @EnableWebSecurity
 //SpringBootwebSecurityConfiguration.WebSecurityEnablerConfiguration 자동 설정 X
+@EnableMethodSecurity(prePostEnabled=true, securedEnabled=true)
 public class SecurityConfig {
     @Autowired
     private DataSource dataSource;
@@ -38,17 +42,20 @@ public class SecurityConfig {
         http.csrf().disable();
         // 로그인 인가 정책
         //http.authorizeHttpRequests() 로 변경시키지 말 것
-        http.authorizeRequests().requestMatchers("/board/list").permitAll();
-        http.authorizeRequests().requestMatchers("/board/register").hasRole("MEMBER");
-        http.authorizeRequests().requestMatchers("/notice/list").permitAll();
-        http.authorizeRequests().requestMatchers("/notice/register").hasRole("ADMIN");
-        // 로그인 처리 자동 설정 화면 사용, 이후 만든 로그인 화면으로 대체(인증정책)
+        // http.authorizeRequests().requestMatchers("/board/list").permitAll();
+        // http.authorizeRequests().requestMatchers("/board/register").hasRole("MEMBER");
+        // http.authorizeRequests().requestMatchers("/notice/list").permitAll();
+        // http.authorizeRequests().requestMatchers("/notice/register").hasRole("ADMIN");
+        // // 로그인 처리 자동 설정 화면 사용, 이후 만든 로그인 화면으로 대체(인증정책)
         // username: test, password: 123456, role: Manager
 
         // 로그인(인증, 인가)정책 실패했을 때 (403페이지, formLogin()) => 설정한 인증, 인가 실패화면 대체
         // 접근 거부 처리자에 대한 페이지 이동 URI를 지정
         // http.exceptionHandling().accessDeniedPage("/accessError");
 
+        // 로그아웃 처리를 위한 URI를 지정하고, 로그아웃한 후에 세션을 무효화 한다.
+        // 로그아웃을 하면 자동 로그인에 사용하는 쿠키도 삭제해 주도록 한다.
+        http.logout().logoutUrl("/logout").invalidateHttpSession(true).deleteCookies("remember-me","JSESSION_ID");
         // 등록한 CustomAccessDeniedHandler.java를 접근 거부 처리자로 지정한다.
         http.exceptionHandling().accessDeniedHandler(createAccessDeniedHandler());
 
@@ -63,7 +70,16 @@ public class SecurityConfig {
         // 로그아웃 처리를 위한 URI를 지정하고, 로그아웃한 후에 세션을 무효화 한다.
         http.logout().logoutUrl("/logout").invalidateHttpSession(true);
 
+        // 데이터 소스를 지정하고 테이블을 이용해서 기존 로그인 정보를 기록
+        // 쿠키의 유효 시간을 지정한다(24시간).
+        http.rememberMe().key("zeus").tokenRepository(createJDBCRepository()).tokenValiditySeconds(60 * 60 * 24);
         return http.build();
+    }
+
+    private PersistentTokenRepository createJDBCRepository() {
+        JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();
+        repo.setDataSource(dataSource);
+        return repo;
     }
 
     /* @Autowired

@@ -38,6 +38,12 @@ public class MemberDAOServiceImpl implements MemberDAOService {
     }
 
     @Override
+    // 회원 정보 검색(id)
+    public Member selectOne(Member member) throws Exception {
+        return memberDAO.selectOne(member);
+    }
+
+    @Override
     // 회원 정보 출력(회원, 권한 조인)
     public Member selectJoin(Member member) throws Exception {
         return memberDAO.selectJoin(member);

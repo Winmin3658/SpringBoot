@@ -13,6 +13,9 @@ public interface MemberDAOService {
     // 회원 권한 삽입
     public void insertAuth(MemberAuth memberAuth) throws Exception;
     
+    // 회원 정보 한 개 출력(회원, 권한 조인)
+    public Member selectOne(Member member) throws Exception;
+
     // 회원 정보 전체 출력
     public List<Member> selectAll() throws Exception;
     

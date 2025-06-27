@@ -23,10 +23,17 @@ pageEncoding="UTF-8"%>
         <div>
             <input type="password" name="password" value="">
         </div>
+        <!-- 로그인 상태유지 체크박스 -->
+        <div>
+            <input type="checkbox" name="remember-me"> 로그인 상태유지
+        </div>
         <div>
             <input type="submit">
         </div>
         <sec:csrfInput />
     </form>
+    <h2>
+        <a href="/">홈으로가기</a>
+    </h2>
 </body>
 </html>

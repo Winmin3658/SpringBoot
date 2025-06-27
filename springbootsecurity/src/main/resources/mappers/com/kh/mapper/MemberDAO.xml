@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.kh.springmybatisproject.mapper.MemberDAO">
+<mapper namespace="com.kh.springbootsecurity.mapper.MemberDAO">
     <!-- 외부 조인을 사용하여 얻은 검색 결과에 대한 매핑을 정의한다.-->
     <resultMap type="Member" id="memberMap">
         <id property="no" column="NO" />
@@ -37,8 +37,8 @@
 
     <select id="selectJoin" resultMap="memberMap">
         SELECT m.no, m.id, pw, name, reg_date, upd_date, auth
-        FROM member m LEFT OUTER JOIN member_auth a ON m.no = a.no
-        WHERE m.no = #{no}
+        FROM securitymember m LEFT OUTER JOIN securitymember_auth a ON m.no = a.no
+        WHERE m.id = #{id}
     </select>
 
     <update id="update">

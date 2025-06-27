@@ -9,5 +9,6 @@ pageEncoding="UTF-8"%>
 <body>
     <h3>접근 불가</h3>
     <h2>"${msg}"</h2>
+    <a href="/">홈으로가기</a>
 </body>
 </html>

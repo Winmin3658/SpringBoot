@@ -31,6 +31,10 @@ public class CustomUserDetailsService implements UserDetailsService{
             e.printStackTrace();
         }
 
-        return _member == null ? null : new CustomUser(_member);
+        if (_member == null) {
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + userName);
+        }
+        return new CustomUser(_member);
+
     }
 }
