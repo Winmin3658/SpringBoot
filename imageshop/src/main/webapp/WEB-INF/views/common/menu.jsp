@@ -9,6 +9,9 @@
             <td width="120">
                 <a href="/codegroup/list"><spring:message code="menu.codegroup.list" /></a>
             </td>
+            <td width="120">
+                <a href="/codedetail/list"><spring:message code="menu.codedetail.list" /></a>
+            </td>
         </tr>
     </table>
 </div>
