@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.image_shop.mapper.MemberMapper">
+   <!-- 사용자 정의 resultMap 요소 정의 -->
+   <resultMap type="Member" id="memberMap">
+      <result property="userNo" column="user_no" />
+      <result property="userId" column="user_id" />
+      <result property="userPw" column="user_pw" />
+      <result property="userName" column="user_name" />
+      <result property="job" column="job" />
+      <result property="coin" column="coin" />
+      <result property="enabled" column="enabled" />
+      <result property="regDate" column="reg_date" />
+      <result property="updDate" column="upd_date" />
+      <collection property="authList" resultMap="authMap">
+      </collection>
+   </resultMap>
+   <resultMap type="MemberAuth" id="authMap">
+      <result property="userNo" column="user_no" />
+      <result property="auth" column="auth" />
+   </resultMap>
+   <!-- public void create(Member member) throws Exception; -->
+   <insert id="create"> INSERT INTO MEMBER(USER_NO,USER_ID,USER_PW,USER_NAME,JOB)
+      VALUES(MEMBER_SEQ.NEXTVAL,#{userId},#{userPw},#{userName},#{job, jdbcType=VARCHAR}) </insert>
+
+   <!-- public void createAuth(MemberAuth memberAuth) throws Exception; -->
+   <insert id="createAuth" parameterType="MemberAuth"> INSERT INTO MEMBER_AUTH(USER_NO,AUTH)
+      VALUES(MEMBER_SEQ.CURRVAL,#{auth}) </insert>
+
+   <!-- public void deleteAuth(int userNo) throws Exception; -->
+   <delete id="deleteAuth" parameterType="MemberAuth"> DELETE FROM MEMBER_AUTH WHERE USER_NO =
+      #{userNo} </delete>
+
+   <!-- public List<Member> list() throws Exception; -->
+   <select id="list" resultType="Member"> SELECT USER_NO,USER_ID,USER_PW,USER_NAME,(SELECT CODE_NAME
+      FROM CODE_DETAIL WHERE GROUP_CODE ='A00' AND CODE_VALUE = JOB) AS JOB,COIN,REG_DATE FROM
+      MEMBER ORDER BY REG_DATE DESC </select>
+
+   <!-- public Member read(int userNo) throws Exception; -->
+   <select id="read" resultMap="memberMap"> SELECT mem.user_no, mem.user_id, user_pw, user_name,
+      job, coin, reg_date, upd_date, auth FROM member mem LEFT OUTER JOIN member_auth auth ON
+      mem.user_no = auth.user_no WHERE mem.user_no = #{userNo} </select>
+
+   <!-- public void modifyAuth(MemberAuth memberAuth) throws Exception; -->
+   <insert id="modifyAuth" parameterType="MemberAuth"> INSERT INTO MEMBER_AUTH(USER_NO, AUTH)
+      VALUES(#{userNo},#{auth}) </insert>
+
+   <!-- public void update(Member member) throws Exception; -->
+   <update id="update" parameterType="Member"> UPDATE MEMBER SET USER_NAME =#{userName},JOB =#{job}
+      WHERE USER_NO = #{userNo} </update>
+
+   <!-- public void delete(int userNo); -->
+   <delete id="delete"> DELETE FROM MEMBER WHERE USER_NO = #{userNo} </delete>
+
+   <!-- public int countAll() throws Exception; -->
+   <select id="countAll" resultType="Integer"> SELECT COUNT(*) FROM MEMBER </select>
+
+   <!-- public Member readByUserId(String userId); -->
+   <select id="readByUserId" resultMap="memberMap"> SELECT MEM.USER_NO, MEM.USER_ID, USER_PW,
+      USER_NAME, JOB, COIN, ENABLED, REG_DATE, UPD_DATE, AUTH FROM MEMBER MEM LEFT OUTER JOIN
+      MEMBER_AUTH AUTH ON MEM.USER_NO = AUTH.USER_NO WHERE MEM.USER_ID = #{userId} </select>
+</mapper>

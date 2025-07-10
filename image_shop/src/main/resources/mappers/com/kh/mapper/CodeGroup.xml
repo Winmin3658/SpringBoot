@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.image_shop.mapper.CodeGroupMapper">
+    <insert id="create" parameterType="CodeGroup">
+        INSERT INTO code_group(group_code,group_name)
+        VALUES(#{groupCode},#{groupName})
+    </insert>
+
+    <select id="list" resultType="CodeGroup">
+        SELECT GROUP_CODE, GROUP_NAME, USE_YN, REG_DATE
+        FROM CODE_GROUP
+        ORDER BY GROUP_CODE DESC,REG_DATE DESC
+    </select>
+
+    <select id="read" parameterType="CodeGroup" resultType="CodeGroup">
+        SELECT GROUP_CODE, GROUP_NAME, USE_YN, REG_DATE
+        FROM CODE_GROUP
+        WHERE GROUP_CODE = #{groupCode}
+    </select>
+
+    <update id="update" parameterType="CodeGroup">
+        UPDATE CODE_GROUP
+        SET GROUP_NAME =#{groupName}
+        WHERE GROUP_CODE = #{groupCode}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM CODE_GROUP
+        WHERE GROUP_CODE = #{groupCode}
+    </delete>
+</mapper>

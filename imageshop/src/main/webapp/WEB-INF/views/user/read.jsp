@@ -4,57 +4,77 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<h2><spring:message code="codedetail.header.read" /></h2>
-
-<form:form modelAttribute="codeDetail">
+<form:form modelAttribute="member">
+    <form:hidden path="userNo" />
     <table>
         <tr>
-            <td><spring:message code="codedetail.groupCode" /></td>
-            <td><form:select path="groupCode" items="${groupCodeList}" itemValue="value" itemLabel="label" readonly="true" /></td>
-            <td><font color="red"><form:errors path="groupCode"/></font></td>
+            <td><spring:message code="user.userId" /></td>
+            <td><form:input path="userId" readonly="true" /></td>
         </tr>
         <tr>
-            <td><spring:message code="codedetail.codeValue" /></td>
-            <td><form:input path="codeValue" readonly="true" /></td>
-            <td><font color="red"><form:errors path="codeValue"/></font></td>
+            <td><spring:message code="user.userName" /></td>
+            <td><form:input path="userName" readonly="true" /></td>
         </tr>
         <tr>
-            <td><spring:message code="codedetail.codeName" /></td>
-            <td><form:input path="codeName" readonly="true" /></td>
-            <td><font color="red"><form:errors path="codeName"/></font></td>
+            <td><spring:message code="user.job" /></td>
+            <td><form:select path="job" items="${jobList}" itemValue="value" itemLabel="label" disabled="true" /></td>
+        </tr>
+        <tr>
+            <td><spring:message code="user.auth" /> - 1</td>
+            <td>
+                <form:select path="authList[0].auth" disabled="true">
+                    <form:option value="" label="=== 선택해 주세요===" />
+                    <form:option value="ROLE_USER" label="사용자" />
+                    <form:option value="ROLE_MEMBER" label="회원" />
+                    <form:option value="ROLE_ADMIN" label="관리자" />
+                </form:select>
+            </td>
+        </tr>
+        <tr>
+            <td><spring:message code="user.auth" /> - 2</td>
+            <td>
+                <form:select path="authList[1].auth" disabled="true">
+                    <form:option value="" label="=== 선택해 주세요===" />
+                    <form:option value="ROLE_USER" label="사용자" />
+                    <form:option value="ROLE_MEMBER" label="회원" />
+                    <form:option value="ROLE_ADMIN" label="관리자" />
+                </form:select>
+            </td>
+        </tr>
+        <tr>
+            <td><spring:message code="user.auth" /> - 3</td>
+            <td>
+                <form:select path="authList[2].auth"disabled="true">
+                    <form:option value="" label="=== 선택해 주세요 ===" />
+                    <form:option value="ROLE_USER" label="사용자" />
+                    <form:option value="ROLE_MEMBER" label="회원" />
+                    <form:option value="ROLE_ADMIN" label="관리자" />
+                </form:select>
+            </td>
         </tr>
     </table>
-</form:form>
-
 <div>
     <button type="submit" id="btnEdit"><spring:message code="action.edit"/></button>
     <button type="submit" id="btnRemove"><spring:message code="action.remove" /></button>
     <button type="submit" id="btnList"><spring:message code="action.list"/></button>
 </div>
+</form:form>
 
 <script>
-    $(document).ready(function() {
-        var formObj = $("#codeDetail");
-        $("#btnEdit").on("click", function()
-            { formObj.attr("action", "/codedetail/modify");
-            formObj.attr("method", "get");
-            formObj.submit();
-
-            var groupCode = $("#groupCode");
-            var groupCodeVal = groupCode.val();
-
-            var codeValue = $("#codeValue");
-            var codeValueVal = codeValue.val();
-
-            self.location = "modify?groupCode=" + groupCodeVal + "&" + "codeValue=" + codeValueVal;
+    $(document).ready(function()
+        { var formObj =
+        $("#member");
+            console.log(formObj);
+        $("#btnEdit").on("click", function() {
+            var userNo = $("#userNo");
+            var userNoVal = userNo.val();
+            self.location = "/user/modify?userNo=" + userNoVal;
         });
         $("#btnRemove").on("click", function()
             { formObj.attr("action", "remove");
             formObj.submit();
         });
-
-        $("#btnList").on("click", function()
-            { self.location = "list";
+        $("#btnList").on("click", function() 
         });
     });
 </script>

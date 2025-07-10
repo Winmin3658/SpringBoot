@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kh.image_shop.mapper.CodeDetailMapper">
+
+    <!-- public void create(CodeDetail codeDetail) throws Exception; -->
+    <insert id="create" parameterType="CodeDetail">
+        INSERT INTO CODE_DETAIL (GROUP_CODE,CODE_VALUE,CODE_NAME,SORT_SEQ)
+        VALUES(#{groupCode},#{codeValue},#{codeName},#{sortSeq})
+    </insert>
+
+    <!-- public Integer getMaxSortSeq(String groupCode) throws Exception; -->
+    <select id="getMaxSortSeq" parameterType="CodeDetail" resultType="java.lang.Integer">
+        SELECT NVL(MAX(SORT_SEQ), 0)
+        FROM CODE_DETAIL
+        WHERE GROUP_CODE = #{groupCode}
+    </select>
+
+    <!-- public List<CodeDetail> list() throws Exception; -->
+    <select id="list" resultType="CodeDetail">
+        SELECT GROUP_CODE, CODE_VALUE, CODE_NAME, SORT_SEQ, USE_YN, REG_DATE
+        FROM CODE_DETAIL
+        ORDER BY GROUP_CODE ASC, SORT_SEQ ASC
+    </select>
+
+    <!-- public CodeDetail read(CodeDetail codeDetail) throws Exception; -->
+    <select id="read" parameterType="CodeDetail" resultType="CodeDetail">
+        SELECT GROUP_CODE,CODE_VALUE,CODE_NAME,SORT_SEQ,USE_YN,REG_DATE
+        FROM CODE_DETAIL
+        WHERE GROUP_CODE = #{groupCode} AND CODE_VALUE = #{codeValue}
+    </select>
+
+    <!-- public void update(CodeDetail codeDetail) throws Exception; -->
+     <update id="update" parameterType="CodeDetail">
+        UPDATE CODE_DETAIL
+        SET CODE_NAME =#{codeName}
+        WHERE GROUP_CODE = #{groupCode}
+        AND CODE_VALUE = #{codeValue}
+     </update>
+
+     <!-- public void delete(CodeDetail codeDetail) throws Exception; -->
+     <delete id="delete" parameterType="CodeDetail">
+        DELETE FROM CODE_DETAIL
+        WHERE GROUP_CODE = #{groupCode}
+        AND CODE_VALUE = #{codeValue}
+     </delete>
+</mapper>

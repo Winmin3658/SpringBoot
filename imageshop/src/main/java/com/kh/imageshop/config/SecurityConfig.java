@@ -36,6 +36,12 @@ public class SecurityConfig {
 
         http.formLogin();
 
+        // 로그아웃을 하면 자동 로그인에 사용하는 쿠키도 삭제한다
+        http.logout()
+        .logoutUrl("/auth/logout")
+        .invalidateHttpSession(true)
+        .deleteCookies("remember-me","JSESSION_ID");
+
 		return http.build();
 	}
 
