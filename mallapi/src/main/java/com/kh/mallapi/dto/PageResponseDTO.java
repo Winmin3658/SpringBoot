@@ -5,7 +5,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import lombok.Builder;
+import lombok.Data;
 
+@Data
 public class PageResponseDTO<E> {
     private List<E> dtoList;
     private List<Integer> pageNumList;
