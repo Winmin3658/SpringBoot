@@ -32,9 +32,9 @@ public class Diary {
     // 사용할 전략을 시퀀스로 선택, 식별자 생성기를 설정해 놓은 DIARY_SEQ_GEN으로 설정
     private Long tno;
     private String title;
-    private String writer;
+    private String content;
     private boolean complete;
-    private LocalDate dueDate;
+    private LocalDate diaryDate;
 
     public void changeTitle(String title) {
         this.title = title;
@@ -44,7 +44,7 @@ public class Diary {
         this.complete = complete;
     }
 
-    public void changeDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
+    public void changeDiaryDate(LocalDate diaryDate) {
+        this.diaryDate = diaryDate;
     }
 }

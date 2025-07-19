@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 public class DiaryDTO {
     private Long tno;
     private String title;
-    private String writer;
+    private String content;
     private boolean complete;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate dueDate;
+    private LocalDate diaryDate;
 }
