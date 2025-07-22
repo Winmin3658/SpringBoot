@@ -41,6 +41,11 @@ public class ProductController {
         log.info(uploadFileNames);
         // 서비스 호출
         Long pno = productService.register(productDTO);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return Map.of("result", pno);
     }
 
@@ -52,6 +57,12 @@ public class ProductController {
     @GetMapping("/list")
     public PageResponseDTO<ProductDTO> list(PageRequestDTO pageRequestDTO) {
         log.info("list............." + pageRequestDTO);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return productService.getList(pageRequestDTO);
     }
 

@@ -38,10 +38,15 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDTO> dtoList = result.get().map(arr -> {
             Product product = (Product) arr[0];
             ProductImage productImage = (ProductImage) arr[1];
+
             ProductDTO productDTO = ProductDTO.builder().pno(product.getPno()).pname(product.getPname())
                     .pdesc(product.getPdesc()).price(product.getPrice()).build();
-            String imageStr = productImage.getFileName();
-            productDTO.setUploadFileNames(List.of(imageStr));
+            if (productImage != null) {
+                String imageStr = productImage.getFileName();
+                productDTO.setUploadFileNames(List.of(imageStr));
+            } else {
+                productDTO.setUploadFileNames(List.of()); // 또는 null 처리
+            }
             return productDTO;
         }).collect(Collectors.toList());
         long totalCount = result.getTotalElements();
