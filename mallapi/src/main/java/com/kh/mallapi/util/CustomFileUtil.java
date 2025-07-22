@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -90,5 +90,23 @@ public class CustomFileUtil {
             return ResponseEntity.internalServerError().build();
         }
         return ResponseEntity.ok().headers(headers).body(resource);
+    }
+
+    public void deleteFiles(List<String> fileNames) {
+        if (fileNames == null || fileNames.size() == 0) {
+            return;
+        }
+        fileNames.forEach(fileName -> {
+            // 썸네일이 있는지 확인하고 삭제
+            String thumbnailFileName = "s_" + fileName;
+            Path thumbnailPath = Paths.get(uploadPath, thumbnailFileName);
+            Path filePath = Paths.get(uploadPath, fileName);
+            try {
+                Files.deleteIfExists(filePath);
+                Files.deleteIfExists(thumbnailPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
     }
 }
