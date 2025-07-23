@@ -42,7 +42,7 @@ public class ProductController {
         // 서비스 호출
         Long pno = productService.register(productDTO);
         try {
-            Thread.sleep(3000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -58,7 +58,7 @@ public class ProductController {
     public PageResponseDTO<ProductDTO> list(PageRequestDTO pageRequestDTO) {
         log.info("list............." + pageRequestDTO);
         try {
-            Thread.sleep(3000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
