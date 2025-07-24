@@ -2,11 +2,14 @@ package com.kh.mallapi.controller.advice;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.kh.mallapi.util.CustomJWTException;
 
 @RestControllerAdvice
 public class CustomControllerAdvice {
@@ -25,5 +28,9 @@ public class CustomControllerAdvice {
     }
 
     // 예외를 처리하고 싶을 때 추가하면 됨
-
+    @ExceptionHandler(CustomJWTException.class)
+    protected ResponseEntity<?> handleJWTException(CustomJWTException e) {
+        String msg = e.getMessage();
+        return ResponseEntity.ok().body(Map.of("error", msg));
+    }
 }
