@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.kh.mallapi.domain.Member;
 import com.kh.mallapi.domain.MemberRole;
 import com.kh.mallapi.dto.MemberDTO;
+import com.kh.mallapi.dto.MemberModifyDTO;
 import com.kh.mallapi.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -42,15 +43,16 @@ public class MemberServiceImpl implements MemberService {
             return memberDTO;
         }
         // 회원이 아니었다면 닉네임은 '소셜회원'으로
-        // 패스워드는 임의로 생성된 Member 만들어짐
+        // 패스워드는 임의로 생성된 Member이 return
         Member socialMember = makeSocialMember(email);
+        // 멤버 테이블에 저장(인증, 인가)
         memberRepository.save(socialMember);
         MemberDTO memberDTO = entityToDTO(socialMember);
         return memberDTO;
     }
 
     private Member makeSocialMember(String email) {
-        // 임의로 비밀번호 생성
+        // 1. 임의로 비밀번호 생성
         String tempPassword = makeTempPassword();
         log.info("tempPassword: " + tempPassword);
         String nickname = "소셜회원";
@@ -100,5 +102,16 @@ public class MemberServiceImpl implements MemberService {
         LinkedHashMap<String, String> kakaoAccount = bodyMap.get("kakao_account");
         log.info("kakaoAccount: " + kakaoAccount);
         return kakaoAccount.get("email");
+    }
+
+    @Override
+    public void modifyMember(MemberModifyDTO memberModifyDTO) {
+        Optional<Member> result = memberRepository.findById(memberModifyDTO.getEmail());
+        Member member = result.orElseThrow();
+
+        member.changePw(passwordEncoder.encode(memberModifyDTO.getPw()));
+        member.changeSocial(false);
+        member.changeNickname(memberModifyDTO.getNickname());
+        memberRepository.save(member);
     }
 }
