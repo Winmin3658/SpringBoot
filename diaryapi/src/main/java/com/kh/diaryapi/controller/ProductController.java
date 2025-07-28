@@ -41,6 +41,11 @@ public class ProductController {
         log.info(uploadFileNames);
         // 서비스 호출
         Long pno = productService.register(productDTO);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return Map.of("result", pno);
     }
 
