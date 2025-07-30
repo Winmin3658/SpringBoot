@@ -47,4 +47,8 @@ public class Diary {
     public void changeDiaryDate(LocalDate diaryDate) {
         this.diaryDate = diaryDate;
     }
+
+    public void changeContent(String content) {
+        this.content = content;
+    }
 }

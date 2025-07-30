@@ -6,8 +6,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.kh.diaryapi.domain.Member;
-import com.kh.diaryapi.domain.MemberRepository;
 import com.kh.diaryapi.domain.MemberRole;
+import com.kh.diaryapi.dto.PageRequestDTO;
+import com.kh.diaryapi.dto.PageResponseDTO;
+import com.kh.diaryapi.dto.ProductDTO;
+import com.kh.diaryapi.repository.MemberRepository;
+import com.kh.diaryapi.service.ProductService;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -18,6 +22,8 @@ class DiaryapiApplicationTests {
 	private MemberRepository memberRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private ProductService productService;
 
 	@Test
 	public void testInsertMember() {
@@ -40,5 +46,12 @@ class DiaryapiApplicationTests {
 		String email = "user9@jjjj.com";
 		Member member = memberRepository.getWithRoles(email);
 		log.info(member);
+	}
+
+	@Test
+	public void testList() {
+		PageRequestDTO pageRequestDTO = PageRequestDTO.builder().page(2).size(10).build();
+		PageResponseDTO<ProductDTO> response = productService.getList(pageRequestDTO);
+		log.info(response);
 	}
 }

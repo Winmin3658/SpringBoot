@@ -39,10 +39,13 @@ public class ProductServiceImpl implements ProductService {
         List<ProductDTO> dtoList = result.get().map(arr -> {
             Product product = (Product) arr[0];
             ProductImage productImage = (ProductImage) arr[1];
+
             ProductDTO productDTO = ProductDTO.builder().pno(product.getPno()).pname(product.getPname())
                     .pdesc(product.getPdesc()).price(product.getPrice()).build();
-            String imageStr = productImage.getFileName();
-            productDTO.setUploadFileNames(List.of(imageStr));
+            if (productImage != null) {
+                String imageStr = productImage.getFileName();
+                productDTO.setUploadFileNames(List.of(imageStr));
+            }
             return productDTO;
         }).collect(Collectors.toList());
         long totalCount = result.getTotalElements();
@@ -62,12 +65,13 @@ public class ProductServiceImpl implements ProductService {
                 .pname(productDTO.getPname()).pdesc(productDTO.getPdesc()).price(productDTO.getPrice()).build();
         // 업로드 처리가 끝난 파일들의 이름 리스트
         List<String> uploadFileNames = productDTO.getUploadFileNames();
-        if (uploadFileNames == null) {
-            return product;
+        if (uploadFileNames == null || uploadFileNames.isEmpty()) {
+            product.addImageString("default.png");
+        } else {
+            uploadFileNames.stream().forEach(uploadName -> {
+                product.addImageString(uploadName);
+            });
         }
-        uploadFileNames.stream().forEach(uploadName -> {
-            product.addImageString(uploadName);
-        });
         return product;
     }
 
@@ -108,6 +112,8 @@ public class ProductServiceImpl implements ProductService {
             uploadFileNames.stream().forEach(uploadName -> {
                 product.addImageString(uploadName);
             });
+        } else {
+            product.addImageString("default.png");
         }
         productRepository.save(product);
     }

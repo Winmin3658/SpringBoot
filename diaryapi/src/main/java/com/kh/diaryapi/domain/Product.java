@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +20,11 @@ import lombok.ToString;
 @Table(name = "tbl_product")
 @Getter
 @ToString(exclude = "imageList")
+@SequenceGenerator(name = "PRODUCT_SEQ_GEN", // 시퀀스 제너레이터 이름
+        sequenceName = "PRODUCT_SEQ", // 시퀀스 이름
+        initialValue = 1, // 시작값
+        allocationSize = 1 // 메모리를 통해 할당할 범위 사이즈
+)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

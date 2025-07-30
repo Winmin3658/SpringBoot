@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.kh.diaryapi.domain.Member;
-import com.kh.diaryapi.domain.MemberRepository;
 import com.kh.diaryapi.dto.MemberDTO;
+import com.kh.diaryapi.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

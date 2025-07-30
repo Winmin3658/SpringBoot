@@ -44,10 +44,8 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             // 스프링 시큐리티에서 인증 정보를 담는 객체
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberDTO,
                     pw, memberDTO.getAuthorities());
-            // 이 객체를 SecurityContextHolder에 넣으면,
-            // 해당 요청은 인증된 사용자로 처리됨
-            SecurityContextHolder.getContext()
-                    .setAuthentication(authenticationToken);
+            // 이 객체를 SecurityContextHolder에 넣으면, 해당 요청은 인증된 사용자로 처리됨
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             log.error("JWT Check Error ....................................");
@@ -63,7 +61,8 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        // Preflight요청은 체크하지 않음
+        // Preflight (지금 보내는 요청이 유효한지를 확인하기 위해 OPTIONS
+        // 메서드로 예비 요청을 보내는 것
         if (request.getMethod().equals("OPTIONS")) {
             return true;
         }
@@ -73,7 +72,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         if (path.startsWith("/api/member/")) {
             return true;
         }
-        // 이미지 조회 경로는 체크하지 않는다면
+        // 이미지 조회 경로는 체크하지 않하고 싶을 때
         if (path.startsWith("/api/products/view/")) {
             return true;
         }

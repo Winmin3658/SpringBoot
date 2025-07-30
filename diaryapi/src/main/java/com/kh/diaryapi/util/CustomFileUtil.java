@@ -71,7 +71,7 @@ public class CustomFileUtil {
     public ResponseEntity<Resource> getFile(String fileName) {
         Resource resource = new FileSystemResource(uploadPath + File.separator + fileName);
         if (!resource.exists()) {
-            resource = new FileSystemResource(uploadPath + File.separator + "default.jpg");
+            resource = new FileSystemResource(uploadPath + File.separator + "default.png");
         }
         HttpHeaders headers = new HttpHeaders();
         try {
